@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	
+	<!--
+	    컨트롤러 클래스 
+		  클라이언트의 요청을 처리하기위해 빈으로 등록되는 컨트롤러는
+		  자격
+		   1. 빈 클래스로 등록
+		   2. 해당 빈 클래스 상단에 @Controller가 선언
+		
+		컨트롤러 메서드 : 반환값 - String = ViewResolver에 전달될 문자열 전달
+		                          void = 클라이언트 요청시 서블릿 패스를 기초로 ViewResolver 전달될 문자열이 결정 전달
+		                          Model = Interface 
+		                                    클라이언트 요청시 서블릿 패스를 기초로 ViewResolver 전달될 문자열이 결정 전달
+		                                  View에 전달될 값을 설정하고 View에 전달
+		                          ModelMap = Model 인터페이스를 구현한 클래스 
+		                                       클라이언트 요청시 서블릿 패스를 기초로 ViewResolver 전달될 문자열이 결정 전달
+		                                     View에 전달될 값을 설정하고 View에 전달
+		                          ModelAndView = ViewResolver에 전달될 View의 경로와 이름을 설정
+		                                         View에 전달될 값을 설정하고 View에 전달
+		                                         * redirect: or forward: 처리 가능
+		                                         
+		                                  
+		                 
+		                 
+		                  파라메터 - Model, ModelMap, MedelAndView
+		                           HttpServletRequest = 클라이언트 요청시 생성된 기본객체 주입
+		                           HttpServletResponse = 클라이언트 요청시 생성된 기본객체 주입
+		                           HttpSession = 클라이언트에 할당된 서버 측 기본객체 주입
+		                             쿼리 스트링 키 = 클라이언트가 전송하는 쿼리스트링의 키(String) 선언 및 주입
+		                           VO = 클라이언트가 전송하는 대량의 쿼리스트링의 키와 VO의 setter 대상의 값 맵핑 처리
+		
+		어노테이션 : @RequestMapping(default 서블릿 패스) : 컨트롤러 클래스 상단 선언
+		                                                      컨트롤러 메서드 상단 선언
+                    @RequestHeader : 컨트롤러 메서드 매개변수 선언과 동반 선언
+                                       클라이언트 요청시의 특정 헤더의 값을 키를 활용해서 취득
+                                     default required=true(미주입시 에러 발생)
+                                     required=false(에러 회피)
+                                     defaultValue - 주입 대상 값이 null일때의 대체값 
+                    @CookieValue : 컨트롤러 메서드 매개변수 선언과 동반 선언
+                                     클라이언트 요청시의 특정 쿠키의 값을 키를 활용해서 취득
+                                   default required=true(미주입시 에러 발생)
+                                   required=false(에러 회피)
+                                   defaultValue - 주입 대상 값이 null일때의 대체값 
+                    context:annotation-config : 자바 JSR-250 스펙
+                                                @Required : property 또는 p 네임스페이스 활용해서 빈 인스턴스화시 값 주입(필수)
+                                                @Value : 빈 클래스의 전역변수 상단에 선언후 프로퍼티스의 값을 해당 전역변수 주입
+                                                @PreDestory : 빈 클래스가 GC되기 직전에 콜백되어야하는 메서드 상단에 선언
+                                                @PostConstruct : 빈 클래스가 인스턴트화 직후 콜백(생성자 -> @PostConstruct 선언메서드 -> setter)
+                                                @Resource : autowire=byType와 동일한 값 주입
+                                                                전역변수 상단
+                                                                메서드 상단(set 키워드의 조합이 불요)
+		            context:component-scan : context:annontation-config 선언으로 활용할수있는 
+		            						 base-package에 선언된 기본 패키지 하위에 존재하는 전체 패키지 내 클래스 상단에 
+		                                     @Controller, @Service, @Repository, @Component 선언시 해당 클래스를 빈으로
+		                                        자동 등록
+		                                        @Controller - 클라이언트의 요청 처리 클래스 상단
+		                                        @Service - Service Layer의 클래스 상단
+		                                        @Repository - DAO Layer의 클래스 상단
+		                                        @Component - 기타 그 외 클래스 상단
+		                                        @Autowired - autowire=byType 동일 값 주입
+		                                                         전역변수 상단
+		                                                         생성자 상단
+		                                                         메서드 상단
+		                 						@Qualifier - 주입 대상 빈의 타입이 중복될때 주입되어야하는 특정빈의 빈등록시의 id or name 
+		                 									속성값 설정 
+		                 						@PathVariable - 클라이언트 요청 서블릿 패스 내 특정 값을 취득
+		                 						@ModelAttribute("View에서 EL접근 키")-클라이언트 요청시 서블릿 패스와 View의 경로와 이름이 일치
+		       
+		                						(void반환과 동일) 컨트롤러 매서드의 반환값(VO)을 내부적으로 ModelMap에 설정된 키와 값으로 저장 처리
+				<mvc:annotation-driven> : @RequestBody- 클라이언트가 요청시 전송하는 전체 쿼리스트링의 프로토 타입(원본) 문자열 취득 
+														mem_id = a001&mem_pass=asdfasdf&mem_name=김은대&....
+										  @ResponseBody - 컨트롤러 매서드의 반환값이 InternalResourceViewResolver에 전달되지 않음 
+										  			      클라이언트에 직접 컨트롤러 매서드의 반환값이 전송(응답 객체에 출력버퍼에 저장후 전송)
+										  RedirectAttribute - 컨트롤러 매서드에서 다른 컨트롤러 매서드로 리다이렉트 처리시 GET방식의 쿼리스트링 전송됨(일반적인 상황).
+										  				 컨트롤러 매서드에서 다른 컨트롤러 매서드로 리다이렉트 처리시 쿼리스트링을 POST 전송방식으로 전송 처리 
+		스프링 IoC(Inversion of Control : 역제어)
+		
+		   - 설정파일에 등록된 빈 클래스의 존재 검증, 인스턴스화 진행,
+		     빈 클래스의 라이프사이클 관리, 해당 빈 클래스의 인스턴스를
+		     요청처에 주입 처리.
+		   - IoC == DL(Dependency Lookup) : 존재 검증
+		         |= DI(Dependency Injection) : 의존성 주입
+		            * 스프링 프레임웍은 설정파일 내 선언된 빈의 인스턴스를 싱글톤 적용 관리(default)
+		
+		빈 : id - 빈을 구분하기위한 유일한 값을 포함하는 구분자 활용
+		     name - 빈 등록시 id와 동반 선언시 해당 id의 alias로 활용
+		             * <bean id="firstDispatcher" name="f1 f2 f3"
+		             빈 등록시 name 속성만 선언되면 id와 동일한 의미
+		     scope - singleton(default) : 설정파일내 등록된 빈의 인스턴스 기본 관리
+		             prototype : DI시마다 신규 인스턴스화가 진행되고 제공
+		             request : 동일한 request 범위 내 빈의 인스턴스가 싱글톤 관리
+		             session : 동일한 session 범위 내 빈의 인스턴스가 싱글톤 관리
+		     c - constructor-arg의 네임스페이스(생성자 대상 값 주입)
+		     p - property의 네임스페이스(setter 접근을 통한 값 주입)
+		     lazy-init - false(default) : 지연 생성(X) 설정파일내 빈의 인스턴스화 시점에 동반 인스턴스화 진행
+		                 true : 지연 생성(O) ApplicationContext를 통해 getBean()로 인스턴스 주입 요청시 인스턴스화가 진행
+			 autowire - byName : 주입이 요구되는 빈 클래스 내 메서드 대상 주입
+			                       메서드 선언 명명 규칙 = public void set + '주입 대상 빈 클래스의 빈 등록시 id 또는 name속성값-기준'(주입 대상 빈의 타입 파라메터 선언){}
+			            byType : 주입이 요구되는 빈 클래스 내 메서드 대상 주입
+			                       메서드 선언 명명 규칙 = public void set + '임의의 메서드명'(주입 대상 빈의 타입 파라메터 선언-기준){}
+			            constructor : 주입이 요구되는 빈 클래스 내 생성자 대상 주입
+			                            생성자에 선언된 파라메터 타입을 기준으로 해당 타입과 일치하는 빈의 인스턴스가 주입 
+	 -->
+	<bean id="firstController" class="kr.or.ddit.first.controller.FirstController"></bean>
+	
+	<!-- 
+		class InternalResourceViewResolver{
+			private String prefix;
+			private String suffix;
+			
+			setter/getter 존재
+		}
+		
+		ex) 1. FirstController 내 firstMethod(){ return "first/hello" }
+		    2. "first/hello" 반환값 InternalResourceViewResolver 취득
+		    3. InternalResourceViewResolver - prefix(/WEB-INF/views/) + 취득값(first/hello) + suffix(.jsp)
+		       = /WEB-INF/views/first/hello.jsp  포워딩 처리
+	 -->
+<!-- 	<bean name="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"> -->
+<!-- 		<property name="prefix" value="/WEB-INF/views/"></property> -->
+<!-- 		<property name="suffix" value=".jsp"></property> -->
+<!-- 	</bean> -->
+	
+</beans>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+<tiles-definitions>
+	<!-- 
+		 타일즈 디스페처 : class 커맨드 컨트롤러 implements IAction{
+                        process(request, response){
+                           //1.포워딩
+                           return "/user/freeboard/freeboardList.tiles";
+                           
+               
+                        }
+                  }
+             1. /user/freeboard/freeboardList.tiles 취득
+             2. user/freeboard/freeboardList 추출
+             3. 누구한테 제공? TilesServlet 에 추출문자열제공
+              *TilesServlet의 역할? 타일즈 프레임웍을 사용해 레이아웃을 구성하는 설정파일(tiles-def.xml)을 초기화
+                     TilesDispatchServlet으로부터 취득한 문자열(user/freeboard/freeboardList)을 활용해 
+                     tiles 설정파일의 definition element의 name 속성값과 mapping후 forwarding처리
+                     *tiles 설정파일 default : /WEB-INF/tiles.xml
+                     
+                     definition 역할 : 레이아웃 구성 단위 
+                     					template-해당 definition 내 선언된 value속성값을 활용해서 실제 레이아웃 구성 
+										attribute - template View를 통해 개별 응답컨텐츠를 제공하는 레이아웃 구성 단위  
+										* extends:definition은 다른 definition에 상속이 가능 
+					
+					definition name속성값과 맴핑 정상 처리: 1.template 속성값 View대상 포워딩 처리
+					 								2.template 속성값 view내 attribute의 name 속성값과 맴핑된 단위view(jsp) 대상 개별 포워딩 처리 				
+										
+										
+		 -->
+
+	<!-- 
+		커맨드 컨트롤러 반환값:/user/freeboard/freeboardList.tiles
+		/user/freeboard/freeboardForm.tiles
+						/user/freeboard/freeboardView.tiles?bo_no=1
+						/user/freeboard/freeboardReplyForm.tiles
+						/admin/freeboard/freeboardView.tiles
+						/admin/freeboard/freeboardReplyForm.tiles
+						/user/freeboard/insertfreeboard.do(타일즈 미활용)
+						/user/freeboard/updatefreeboard.do(타일즈 미활용)
+						/user/freeboard/deletefreeboard.do(타일즈 미활용)
+	 -->
+	
+<!-- 	<definition name="user/main" template="/WEB-INF/views/user/mainTemplate.jsp" -->
+<!-- 			preparer="kr.or.ddit.utiles.TilesCustomViewPrepare"> -->
+	<definition name="user/main" template="/WEB-INF/views/user/mainTemplate.jsp">
+		<put-attribute name="title" value="엄마!!미안해!!"></put-attribute>
+		<put-attribute name="header" value="/WEB-INF/views/user/layout/header.jsp"></put-attribute>
+		<put-attribute name="content_header" value="/WEB-INF/views/user/content_header.jsp"></put-attribute>
+		<put-attribute name="left" value="/WEB-INF/views/user/layout/left.jsp"></put-attribute>
+		<put-attribute name="footer" value="/WEB-INF/views/user/layout/footer.jsp"></put-attribute>
+	</definition>
+	
+
+	<!-- user/freeboard/freeboardList -->
+	<definition name="user/*/*" extends="user/main">
+		<put-attribute name="content" value="/WEB-INF/views/user/{1}/{2}.jsp"></put-attribute>
+	</definition>
+
+</tiles-definitions>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	
+	<bean name="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/WEB-INF/views/"
+		p:suffix=".jsp"
+		p:order="3">
+	</bean>
+	
+	<bean name="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"
+	p:order="2"></bean>
+	
+	<bean name="tilesViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+			p:viewClass="org.springframework.web.servlet.view.tiles2.TilesView"
+			p:order="1">
+	</bean>
+	
+<!-- 	<bean id="memberVO" name="m1 m2 m3" class="kr.or.ddit.vo.MemberVO"> -->
+<!-- 		c:mem_id="b001" -->
+<!-- 		c:mem_pass="1004" -->
+<!-- 		c:mem_name="이쁜이" -->
+<!-- 		p:mem_id="a001" -->
+<!-- 		p:mem_pass="asdfasdf" -->
+<!-- 		p:mem_name="김은대"> -->
+<!-- 		<constructor-arg name="mem_name" value="이쁜이"></constructor-arg> -->
+<!-- 		<constructor-arg name="mem_id" value="b001"></constructor-arg> -->
+<!-- 		<constructor-arg name="mem_pass" value="1004"></constructor-arg> -->
+<!-- 		<property name="mem_id" value="a001"></property> -->
+<!-- 		<property name="mem_pass" value="asdfasdf"></property> -->
+<!-- 		<property name="mem_name" value="김은대"></property> -->
+<!-- 	</bean> -->
+</beans>
+
+
+
+
+
+
+
+

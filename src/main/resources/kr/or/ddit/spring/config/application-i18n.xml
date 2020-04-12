@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 
+		스프링 프레임웍 국제화(다국어) 서비스
+		 1.클라이언트 요청시 요청헤더 내 포함되는 Accept-Language의 값을 
+		 	기초로 클라이언트가 접근하는 국가코드와 언어코드 취득
+		 2.클라이언트의 국가코드-언어코드 해당 국가의 언어로 서비스를 하기 위한 
+		 	properties파일에 접근 
+		 	-message_jp.properties
+		 	-message_en.properties
+		 	-message_ko.properties
+		 	-message.properties(국가별 다국어 서비스가 준비되지 않은 국가로부터 접근시 활용)
+		 3.국가별 준비된 properties의 코드를 활용해서 해당 코드의 값으로 
+		 	다국어 서비스 	
+	 -->
+	 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver"></bean>
+		
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basename="kr/or/ddit/i18n/config/message"
+		p:defaultEncoding="UTF-8">
+	</bean>
+	
+	<bean id="messageAccesor" class="org.springframework.context.support.MessageSourceAccessor"
+	  c:messageSource-ref="messageSource">
+	</bean>
+	
+	
+</beans>

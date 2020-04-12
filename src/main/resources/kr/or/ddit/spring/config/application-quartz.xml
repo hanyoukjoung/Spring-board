@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 
+		Quartz 스케줄러: 스케줄링, 시작, 일시정리, 재시작 , 종료 제어 
+			Trigger : 스케줄링
+			Job : 해당 스케줄에 따라 실행되어야하는 비지니스 로직
+			SchedulerFactory :시작,일시정지,재시작,종료 제어 
+	 -->
+	 <bean id="timeCheckJob" class="org.springframework.scheduling.quartz.JobDetailBean"
+	 	p:jobClass="kr.or.ddit.quartz.config.job.TimeCheckJobClazz">
+	 </bean>
+	 
+	 <!-- 
+	 	class CronTriggerFactoryBean{
+	 		private JobDetail jobDetail;
+	 		public void setJobDetail(JobDetail jobDetail){
+	 			this.jobDetail = jobDetail;
+	 		}
+	 	}
+	  -->
+	 <bean id="timeCheckJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+	 	p:jobDetail-ref="timeCheckJob"
+	 	p:cronExpression="0/5 * * * * ?">
+	 </bean>
+	 <!-- 
+	 	스케줄러 팩토리 빈은 인스턴스화 시 스케줄러가 자동 실행
+	 	@Component
+	 	class 클래스{
+	 		@Autowired
+	 	   private schedulerFactory
+	 		매서드(){
+	 			//쿼츠 스케줄러 제어 매서드가 제공 
+	 			schedulerFactory.start();
+	 			schedulerFactory.stop();
+	 			schedulerFactory.destroy();
+	 		
+	 		}
+	 		
+	 	} 
+	  -->
+	 
+	 <bean id="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	 	<property name="triggers">
+	 		<list>
+	 			<ref bean="timeCheckJobTrigger"/>
+	 		</list>
+	 	</property>
+	 	<property name="autoStartup" value="false"></property>
+	 </bean>
+	 
+	 
+	 
+</beans>

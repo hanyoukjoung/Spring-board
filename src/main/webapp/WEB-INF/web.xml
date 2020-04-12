@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee https://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	
+	<!-- 
+		스프링 설정파일 : default(경로, 파일명) WEB-INF/web.xml내 선언된 servlet name + '-servlet.xml'
+		                 ex)WEB-INF/firstDispatcher-servlet.xml
+		                 
+		DispatcherServlet => WebApplicationContext(스프링 프레임웍의 전체 빈과 설정을 관리)
+		
+		                                                         Root Context
+		                                                         ContextLoaderListener
+		                                                         (WebApplicationContext)
+		                                                             application-*.xml
+		                                                         * 서로 다른 ServletContext 간 공유
+		                                                         * 서버 실행시 Root WebApplicationContext 인스턴스화 되는 시점
+		                                                                 |
+		         =================================================================================================================                                  
+		         |                                                       |                                                       |
+		         |                                                       |                                                       | 
+		Servlet Context                        공유(X)            Servlet Context                                          Servlet Contet
+		firstDispatcher 서블릿                                       secondDispatcher 서블릿                                     doDispatcher 서블릿
+		  DispatcherServlet(WebApplicationContext)                   DispatcherServlet(WebApplicationContext)              DispatcherServlet(WebApplicationContext)
+		     firstDispatcher-servlet.xml                                  secondDispatcher-servlet.xml                     mvc-*.xml        
+		  * .first 요청시 요청 처리                                     * .second 요청시 요청 처리                                * .do 요청시 요청 처리
+		  * 클라이언트의 해당 확장자 요청시 : 인스턴스화 시점           * 클라이언트의 해당 확장자 요청시 : 인스턴스화 시점        * 클라이언트의 해당 확장자 요청시 : 인스턴스화 시점
+	 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:kr/or/ddit/spring/config/application-*.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	 
+	<servlet>
+		<servlet-name>firstDispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>firstDispatcher</servlet-name>
+		<url-pattern>*.first</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>secondDispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>secondDispatcher</servlet-name>
+		<url-pattern>*.second</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>doDispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/servlet/mvc-*.xml</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doDispatcher</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 
+		 클라이언트의 인코딩 타입 요청 헤더 전송시 취득 : 
+		                   HttpServletRequest.getCharacterEncoding()
+		     forceEncoding : true - 클라이언트가 전송된 특정 인코딩 타입의 유무와 상관없이 설정된 인코딩 적용
+		                     false - 취득시 null이라면 선언된 인코딩 타입이 적용.
+		                               인코딩 타입이 요청 헤더를 통해 전송되면 해당 인코딩 타입이 적용.
+	 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+	<context-param>
+		<param-name>logbackConfigLocation</param-name>
+		<param-value>classpath:kr/or/ddit/logback/config/logback.xml</param-value>
+	</context-param>
+	
+	
+	<listener>
+		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+		
+	</listener>
+	
+</web-app>
+
+
+
+
+
+
+
+
